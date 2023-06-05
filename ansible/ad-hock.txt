@@ -1,0 +1,19 @@
+ansible ubuntu -m copy -a "src=docker-compose.yml dest=/home/ubuntu mode=777" -b (copy file)
+ansible ubuntu -m command -a "sudo systemctl status docker"
+docker-compose -f docker-compose.yml up
+
+sudo docker-compose -f docker-compose.yml up
+
+docker-compose ps
+
+
+sudo docker exec -it cassandra1 cqlsh
+
+CREATE KEYSPACE mykeyspace WITH replication = {'class': 'SimpleStrategy', 'replication_factor': 1};
+USE mykeyspace;
+CREATE TABLE mytable (id INT PRIMARY KEY, data TEXT);
+INSERT INTO mytable (id, data) VALUES (1, 'Hello, Cassandra!');
+SELECT * FROM mytable;
+
+
+ ansible-playbook ldap.yml --extra-vars "@vars.yml"

@@ -1,0 +1,112 @@
+---
+- name: Playbook for OpenLDAP installation
+  hosts: ubuntu
+  become: true
+  vars_files:
+    - vars.yml
+
+  tasks:
+    - name: Обновление кэша пакетов
+      apt:
+        update_cache: yes
+
+    - name: Установка пакета python-ldap
+      apt:
+        name: python3-ldap
+        state: present
+
+    - name: Установка пакетов OpenLDAP
+      apt:
+        name: slapd
+        state: present
+
+    - name: Настройка slapd
+      debconf:
+        name: slapd
+        question: slapd/root_password
+        value: "{{ ldap_admin_password | quote }}"
+        vtype: password
+
+    - debconf:
+        name: slapd
+        question: slapd/domain
+        value: "{{ ldap_domain | quote }}"
+        vtype: string
+     
+
+    - name: Создание записи пользователя user1
+      ldap_entry:
+        dn: "cn=user1,{{ ldap_suffix }}"
+        objectClass:
+          - top
+          - account
+          - posixAccount
+          - shadowAccount
+          - person
+          - inetOrgPerson
+        attributes:
+          cn: user1
+          uid: user1
+          uidNumber: 16859
+          gidNumber: 100
+          homeDirectory: /home/ubuntu
+          userPassword: Password1
+          
+        bind_dn: "{{ ldap_suffix | quote }}"
+        bind_pw: "{{ ldap_admin_password | quote }}"
+        server_uri: ldap://localhost
+        state: present
+
+    - name: Создание записи пользователя user2
+      ldap_entry:
+        dn: "cn=user2,{{ ldap_suffix }}"
+        objectClass:
+          - top
+          - account
+          - posixAccount
+          - shadowAccount
+          - person
+        attributes:
+          cn: user2
+          uid: user2
+          uidNumber: 16860
+          gidNumber: 1000
+          homeDirectory: /home/user2
+          userPassword: "{{ ldap_user2_password }}"
+        bind_dn: "cn=admin,{{ ldap_suffix }}"
+        bind_pw: "{{ ldap_admin_password }}"
+        server_uri: ldap://localhost
+        state: present
+
+    - name: Создание записи группы group1
+      ldap_entry:
+        dn: "cn=group1,{{ ldap_suffix }}"
+        objectClass:
+          - top
+          - posixGroup
+        attributes:
+          cn: group1
+          gidNumber: 1001
+        bind_dn: "cn=admin,{{ ldap_suffix }}"
+        bind_pw: "{{ ldap_admin_password }}"
+        server_uri: ldap://localhost
+        state: present
+
+    - name: Создание записи группы group2
+      ldap_entry:
+        dn: "cn=group2,{{ ldap_suffix }}"
+        objectClass:
+          - top
+          - posixGroup
+        attributes:
+          cn: group2
+          gidNumber: 1002
+        bind_dn: "cn=admin,{{ ldap_suffix }}"
+        bind_pw: "{{ ldap_admin_password }}"
+        server_uri: ldap://localhost
+        state: present
+
+  handlers:
+    - name: Restart slapd service
+      service:
+        name: slapd

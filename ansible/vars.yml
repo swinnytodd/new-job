@@ -1,0 +1,9 @@
+ldap_suffix: "CN=slapd,OU=abc,DC=abc,DC=abc,DC=com"
+ldap_domain: "example.com"
+ldap_admin_password: "swinnytodd"
+ldap_user1_password: "swinnytodd1"
+ldap_user2_password: "bobpassword"
+
+
+
+

@@ -1,0 +1,12 @@
+[stage]
+linux_ec2 
+ubuntu    
+
+
+[amazon_test]
+linux_ec2 ansible_host=3.8.193.178
+
+[ubuntu_test]
+ubuntu ansible_host=13.40.136.54
+
+

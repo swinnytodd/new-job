@@ -1,0 +1,35 @@
+---
+- name: Установка Docker и Docker Compose на Ubuntu
+  hosts: ubuntu
+  become: true
+  tasks:
+    - name: Установка зависимостей
+      apt:
+        name: ['apt-transport-https', 'ca-certificates', 'curl', 'gnupg-agent', 'software-properties-common']
+        update_cache: yes
+
+    - name: Добавление официального GPG ключа Docker
+      apt_key:
+        url: https://download.docker.com/linux/ubuntu/gpg
+        state: present
+
+    - name: Добавление репозитория Docker
+      apt_repository:
+        repo: deb [arch=amd64] https://download.docker.com/linux/ubuntu {{ ansible_distribution_release }} stable
+        state: present
+
+    - name: Обновление списка пакетов
+      apt:
+        update_cache: yes
+
+    - name: Установка Docker
+      apt:
+        name: docker-ce
+        state: present
+
+    - name: Установка Docker Compose
+      shell: >
+        curl -sSL https://github.com/docker/compose/releases/latest/download/docker-compose-Linux-x86_64 -o /usr/local/bin/docker-compose &&
+        chmod +x /usr/local/bin/docker-compose
+      args:
+        executable: /bin/bash

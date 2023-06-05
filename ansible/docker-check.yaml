@@ -1,0 +1,25 @@
+---
+- name: Проверка установки Docker и Docker Compose
+  hosts: ubuntu
+  become: true
+  tasks:
+    - name: Проверка Docker
+      command: docker version
+      register: docker_output
+      ignore_errors: true
+
+    - name: Отображение вывода Docker
+      debug:
+        var: docker_output.stdout_lines
+      when: docker_output is success
+
+    - name: Проверка Docker Compose
+      command: docker-compose version
+      register: docker_compose_output
+      ignore_errors: true
+
+    - name: Отображение вывода Docker Compose
+      debug:
+        var: docker_compose_output.stdout_lines
+      when: docker_compose_output is success
+
