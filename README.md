@@ -23,4 +23,4 @@
 3. установить в ldap domain и organization
 4. добавить 2 пользователя в ldap
 6. добавить 2 группы в ldap
-Наконец, команда `ansible-playbook ldap.yml --extra-vars "@vars.yml"` запускает плейбук Ansible `ldap.yml`
+<p>Наконец, команда `ansible-playbook ldap.yml --extra-vars "@vars.yml"` запускает плейбук Ansible `ldap.yml`</p>
